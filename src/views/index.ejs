@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>CRUD API</title>
+</head>
+<body>
+  <h1>GET /users</h1>
+  <div>
+    <button type="submit" onclick="get()">GET</button>
+  </div>
+  <h1>GET /users/{id}</h1>
+  <div>
+    <div>
+      <label>Id</label>
+      <input id="get-id" placeholder="id">
+    </div>
+    <button type="submit"
+      onclick="
+        let id = document.getElementById('get-id').value;
+        get(id)
+      "
+    >GET</button>
+  </div>
+  <h1>POST /users</h1>
+  <div>
+    <form id="post-form">
+      <div>
+        <label>Name</label>
+        <input required name="name">
+      </div>
+      <div>
+        <label>Email</label>
+        <input required type="email" name="email">
+      </div>
+      <button onclick="post()" type="button">POST</button>
+    </form>
+  </div>
+  <h1>PUT /users/{id}</h1>
+  <div>
+    <form id="put-form">
+      <div>
+        <label>Id</label>
+        <input required name="id" placeholder="id">
+      </div>
+      <div>
+        <label>Name</label>
+        <input name="name">
+      </div>
+      <div>
+        <label>Email</label>
+        <input type="email" name="email">
+      </div>
+      <button onclick="put()" type="button">PUT</button>
+    </form>
+  </div>
+  <h1>DELETE /users/{id}</h1>
+  <div>
+    <div>
+      <label>Id</label>
+      <input id="delete-id" placeholder="id">
+    </div>
+    <button
+      onclick="
+        let did = document.getElementById('delete-id').value;
+        _delete(did);
+      "
+    >DELETE</button>
+  </div>
+</body>
+<script>
+  async function get(id) {
+    window.location.href = '/users/' + (id ? id : "");
+  }
+  async function post() {
+    const data = new URLSearchParams();
+    let formElement = document.getElementById('post-form');
+    for (const pair of new FormData(formElement)) {
+      data.append(pair[0], pair[1]);
+    }
+
+    await fetch('/users', {
+      method: 'post',
+      body: data,
+    });
+  }
+  async function put() {
+    const data = new URLSearchParams();
+    let formElement = document.getElementById('put-form');
+    let putId;
+    for (const pair of new FormData(formElement)) {
+      if (pair[0] == 'id') {
+        putId = pair[1];
+        continue;
+      }
+      if (pair[1]) {
+        data.append(pair[0], pair[1]);
+      }
+    }
+
+    await fetch('/users/' + putId, {
+      method: 'put',
+      body: data,
+    });
+  }
+  async function _delete(id) {
+    console.log(id);
+    await fetch('/users/' + id, {
+      method: 'delete'
+    });
+  }
+</script>
+</html>
